@@ -43,7 +43,13 @@ export default async function ContentSettingsPage() {
         {!readiness.canPublishToProduction ? (
           <ul className="mt-4 space-y-1 text-sm leading-7 text-amber-800">
             {readiness.blockers
-              .filter((item) => item.includes("法律") || item.includes("支持邮箱") || item.includes("APP_URL") || item.includes("NEXTAUTH"))
+              .filter(
+                (item) =>
+                  item.toLowerCase().includes("legal") ||
+                  item.toLowerCase().includes("support") ||
+                  item.includes("APP_URL") ||
+                  item.includes("NEXTAUTH")
+              )
               .map((blocker) => (
                 <li key={blocker}>- {blocker}</li>
               ))}
