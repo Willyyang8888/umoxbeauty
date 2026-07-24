@@ -32,10 +32,10 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     legalComplete,
     "legal-placeholders",
-    "法律资料完整性",
+    "Legal information completeness",
     legalComplete
-      ? "法律页面关键占位字段已填写。"
-      : "存在未替换的法律占位字段，生产环境不得发布公开法律页面。"
+      ? "Required legal placeholders have been completed."
+      : "Some legal placeholders are still unresolved. Public legal pages must not be published to production yet."
   );
 
   const authConfigured = Boolean(env.NEXTAUTH_SECRET);
@@ -44,8 +44,8 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     authConfigured,
     "nextauth-secret",
-    "管理员认证密钥",
-    authConfigured ? "NEXTAUTH_SECRET 已配置。" : "NEXTAUTH_SECRET 未配置。"
+    "Admin authentication secret",
+    authConfigured ? "NEXTAUTH_SECRET is configured." : "NEXTAUTH_SECRET is missing."
   );
 
   const appUrlConfigured = Boolean(env.APP_URL && env.NEXTAUTH_URL);
@@ -54,8 +54,10 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     appUrlConfigured,
     "app-url",
-    "应用 URL 配置",
-    appUrlConfigured ? "APP_URL 与 NEXTAUTH_URL 已配置。" : "APP_URL 或 NEXTAUTH_URL 缺失。"
+    "Application URL configuration",
+    appUrlConfigured
+      ? "APP_URL and NEXTAUTH_URL are configured."
+      : "APP_URL or NEXTAUTH_URL is missing."
   );
 
   const stripeConfigured = Boolean(
@@ -66,8 +68,10 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     stripeConfigured,
     "stripe-config",
-    "Stripe 生产配置",
-    stripeConfigured ? "Stripe 关键环境变量齐全。" : "Stripe Publishable/Secret/Webhook Secret 缺失。"
+    "Stripe production configuration",
+    stripeConfigured
+      ? "Stripe publishable key, secret key, and webhook secret are configured."
+      : "Stripe publishable key, secret key, or webhook secret is missing."
   );
 
   const emailConfigured = Boolean(env.EMAIL_FROM && env.EMAIL_PROVIDER_API_KEY && env.SUPPORT_EMAIL);
@@ -76,8 +80,10 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     emailConfigured,
     "email-config",
-    "邮件与支持邮箱",
-    emailConfigured ? "邮件服务与支持邮箱已配置。" : "邮件服务或支持邮箱未完整配置。"
+    "Email and support inbox",
+    emailConfigured
+      ? "Email delivery settings and support inbox are configured."
+      : "Email delivery settings or the support inbox are incomplete."
   );
 
   const dbConfigured = Boolean(env.DATABASE_URL);
@@ -86,8 +92,8 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     blockers,
     dbConfigured,
     "database-config",
-    "数据库连接",
-    dbConfigured ? "DATABASE_URL 已配置。" : "DATABASE_URL 未配置。"
+    "Database connection",
+    dbConfigured ? "DATABASE_URL is configured." : "DATABASE_URL is missing."
   );
 
   let gatewayConfigs: Array<{ gateway: PaymentGatewayName; enabled: boolean }> = [];
@@ -101,21 +107,21 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
         }
       });
     } catch {
-      blockers.push("无法读取网关配置，无法确认生产环境是否可安全上线。");
+      blockers.push("Gateway configuration could not be read, so production readiness cannot be confirmed.");
       checks.push({
         key: "gateway-config-read",
-        label: "网关配置读取",
+        label: "Gateway configuration read",
         status: "fail",
-        detail: "数据库不可用或网关配置读取失败。"
+        detail: "The database is unavailable or gateway configuration could not be loaded."
       });
     }
   } else {
-    blockers.push("无法读取网关配置，无法确认生产环境是否可安全上线。");
+    blockers.push("Gateway configuration could not be read, so production readiness cannot be confirmed.");
     checks.push({
       key: "gateway-config-read",
-      label: "网关配置读取",
+      label: "Gateway configuration read",
       status: "fail",
-      detail: "DATABASE_URL 未配置，无法读取网关配置。"
+      detail: "DATABASE_URL is missing, so gateway configuration cannot be read."
     });
   }
 
@@ -127,19 +133,19 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
   );
 
   if (!stripeEnabled && !monerisEnabled) {
-    blockers.push("至少需要启用一个支付网关。");
+    blockers.push("At least one payment gateway must be enabled.");
     checks.push({
       key: "gateway-enabled",
-      label: "支付网关启用状态",
+      label: "Payment gateway enablement",
       status: "fail",
-      detail: "当前没有任何启用的支付网关。"
+      detail: "No payment gateway is currently enabled."
     });
   } else {
     checks.push({
       key: "gateway-enabled",
-      label: "支付网关启用状态",
+      label: "Payment gateway enablement",
       status: "pass",
-      detail: `已启用网关: ${[stripeEnabled ? "STRIPE" : null, monerisEnabled ? "MONERIS" : null]
+      detail: `Enabled gateways: ${[stripeEnabled ? "STRIPE" : null, monerisEnabled ? "MONERIS" : null]
         .filter(Boolean)
         .join(", ")}`
     });
@@ -150,14 +156,14 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     const monerisStatus = env.MONERIS_ENVIRONMENT === "test" ? "warn" : monerisReadyForProduction ? "pass" : "fail";
     const detail =
       env.MONERIS_ENVIRONMENT === "test"
-        ? "Moneris 仍处于测试模式或内部模拟流程。"
+        ? "Moneris is still in test mode or using the internal simulation flow."
         : monerisReadyForProduction
-          ? "Moneris 基本凭证已配置。"
-          : "Moneris 已启用但缺少生产凭证。";
+          ? "Moneris production credentials are configured."
+          : "Moneris is enabled but production credentials are missing.";
 
     checks.push({
       key: "moneris-production",
-      label: "Moneris 生产准备状态",
+      label: "Moneris production readiness",
       status: monerisStatus,
       detail
     });
@@ -167,22 +173,22 @@ export async function getReleaseReadiness(): Promise<ReleaseReadiness> {
     }
 
     if (monerisStatus === "warn") {
-      warnings.push("Moneris 仍是测试模式或内部模拟实现，不能视为正式生产接入。");
+      warnings.push("Moneris is still running in test mode or internal simulation and cannot be treated as a live production gateway.");
     }
   }
 
   checks.push({
     key: "backup-doc",
-    label: "数据库备份文档",
+    label: "Database backup documentation",
     status: "pass",
-    detail: "仓库已提供数据库备份与恢复说明文档。"
+    detail: "The repository includes database backup and recovery guidance."
   });
 
   checks.push({
     key: "monitoring-doc",
-    label: "日志与监控文档",
+    label: "Logging and monitoring documentation",
     status: "pass",
-    detail: "仓库已提供日志脱敏与监控建议文档。"
+    detail: "The repository includes logging redaction and monitoring guidance."
   });
 
   return {
