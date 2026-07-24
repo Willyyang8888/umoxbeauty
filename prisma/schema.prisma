@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentGatewayName {
+  STRIPE
+  MONERIS
+}
+
+enum SupportTransactionStatus {
+  CREATED
+  REQUIRES_PAYMENT
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  PARTIALLY_REFUNDED
+  REFUNDED
+  DISPUTED
+}
+
+enum RefundStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum WebhookProcessingStatus {
+  RECEIVED
+  PROCESSED
+  SKIPPED_DUPLICATE
+  FAILED
+}
+
+enum ReceiptDispatchStatus {
+  PENDING
+  SENT
+  SKIPPED_NOT_CONFIGURED
+  FAILED
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  refunds      Refund[]
+  auditLogs    AuditLog[]
+}
+
+model SupportSession {
+  id                    String               @id @default(cuid())
+  publicReference       String               @unique
+  paymentLabel          String               @default("SUPPORT")
+  requestedAmount       Int
+  currency              String               @default("CAD")
+  donorName             String
+  donorEmail            String
+  isAnonymous           Boolean              @default(false)
+  message               String?
+  status                SupportTransactionStatus @default(CREATED)
+  successfulTransaction String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  transactions          SupportTransaction[]
+}
+
+model SupportTransaction {
+  id                     String                   @id @default(cuid())
+  sessionId              String
+  publicReference        String                   @unique
+  gateway                PaymentGatewayName
+  gatewayTransactionId   String?
+  gatewayPaymentIntentId String?
+  amount                 Int
+  currency               String                   @default("CAD")
+  status                 SupportTransactionStatus @default(CREATED)
+  paymentType            String                   @default("SUPPORT")
+  donorName              String
+  donorEmail             String
+  isAnonymous            Boolean                  @default(false)
+  message                String?
+  cardBrand              String?
+  cardLast4              String?
+  cardCountry            String?
+  failureCode            String?
+  failureMessage         String?
+  paidAt                 DateTime?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  session                SupportSession           @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  attempts               PaymentAttempt[]
+  refunds                Refund[]
+  webhookEvents          WebhookEvent[]
+  receiptDispatches      ReceiptDispatch[]
+
+  @@index([gateway, status])
+  @@index([donorEmail])
+  @@index([createdAt])
+}
+
+model PaymentAttempt {
+  id             String                   @id @default(cuid())
+  transactionId  String
+  gateway        PaymentGatewayName
+  status         SupportTransactionStatus @default(CREATED)
+  idempotencyKey String                   @unique
+  clientToken    String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  transaction    SupportTransaction       @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model Refund {
+  id               String      @id @default(cuid())
+  transactionId    String
+  gatewayRefundId  String?
+  amount           Int
+  currency         String      @default("CAD")
+  reason           String
+  status           RefundStatus @default(PENDING)
+  createdByAdminId String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  transaction      SupportTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  createdByAdmin   AdminUser   @relation(fields: [createdByAdminId], references: [id], onDelete: Restrict)
+}
+
+model WebhookEvent {
+  id               String                  @id @default(cuid())
+  transactionId    String?
+  gateway          PaymentGatewayName
+  gatewayEventId   String                  @unique
+  eventType        String
+  payloadHash      String
+  processingStatus WebhookProcessingStatus @default(RECEIVED)
+  errorMessage     String?
+  receivedAt       DateTime                @default(now())
+  processedAt      DateTime?
+  transaction      SupportTransaction?     @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  @@index([gateway, receivedAt])
+}
+
+model ReceiptDispatch {
+  id            String                 @id @default(cuid())
+  transactionId String
+  email         String
+  templateKey   String
+  status        ReceiptDispatchStatus  @default(PENDING)
+  sentAt        DateTime?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  transaction   SupportTransaction     @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@unique([transactionId, templateKey])
+}
+
+model GatewayConfiguration {
+  id                   String             @id @default(cuid())
+  gateway              PaymentGatewayName @unique
+  enabled              Boolean            @default(false)
+  isDefault            Boolean            @default(false)
+  environment          String             @default("test")
+  nonSensitiveSettings Json
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+model SiteContentSettings {
+  id                String   @id @default(cuid())
+  siteName          String
+  supportLabel      String   @default("Support")
+  defaultCurrency   String   @default("CAD")
+  presetAmounts     Json
+  legalPlaceholders Json
+  homepageContent   Json
+  emailTemplates    Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  adminUserId String
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([action, createdAt])
+}
