@@ -1,5 +1,6 @@
 import { ContentSettingsForm } from "@/components/admin/content-settings-form";
 import { Card } from "@/components/ui/card";
+import { defaultLegalPlaceholders } from "@/lib/content";
 import { getReleaseReadiness } from "@/lib/release-readiness";
 import { getContentSettings } from "@/server/services/admin-service";
 
@@ -7,7 +8,7 @@ export default async function ContentSettingsPage() {
   const content = await getContentSettings();
   const readiness = await getReleaseReadiness();
   const homepage = (content?.homepageContent ?? {}) as { title?: string; subtitle?: string };
-  const legal = (content?.legalPlaceholders ?? {}) as Record<string, string>;
+  const legal = (content?.legalPlaceholders ?? defaultLegalPlaceholders) as Record<string, string>;
 
   return (
     <div className="space-y-6">
@@ -17,20 +18,22 @@ export default async function ContentSettingsPage() {
       </div>
       <ContentSettingsForm
         initialValues={{
-          siteName: content?.siteName ?? "Project Support Site",
+          siteName: content?.siteName ?? "Umox Beauty",
+          legalCompanyName: legal.LEGAL_COMPANY_NAME ?? defaultLegalPlaceholders.LEGAL_COMPANY_NAME,
           supportLabel:
             (content?.supportLabel as "Support" | "Contribution" | "Project Funding" | "Donation") ??
             "Support",
-          homepageTitle: homepage.title ?? "Support a company-operated project with clarity and trust",
+          homepageTitle: homepage.title ?? "Support the development of Umox Beauty",
           homepageSubtitle:
             homepage.subtitle ??
-            "This site is run directly by its Canadian operating company and accepts direct project support by credit card.",
-          projectPurpose: legal.PROJECT_PURPOSE ?? "[PROJECT_PURPOSE]",
-          fundUsageDescription: legal.FUND_USAGE_DESCRIPTION ?? "[FUND_USAGE_DESCRIPTION]",
-          supportEmail: legal.SUPPORT_EMAIL ?? "support@example.com",
-          registeredAddress: legal.REGISTERED_ADDRESS ?? "[REGISTERED_ADDRESS]",
-          businessNumber: legal.BUSINESS_NUMBER ?? "[BUSINESS_NUMBER]",
-          contactPhone: legal.CONTACT_PHONE ?? "[CONTACT_PHONE]"
+            "Umox Beauty is an independently developed beauty recommendation application created to help users make everyday makeup and beauty decisions more easily and confidently.",
+          projectPurpose: legal.PROJECT_PURPOSE ?? defaultLegalPlaceholders.PROJECT_PURPOSE,
+          fundUsageDescription:
+            legal.FUND_USAGE_DESCRIPTION ?? defaultLegalPlaceholders.FUND_USAGE_DESCRIPTION,
+          supportEmail: legal.SUPPORT_EMAIL ?? defaultLegalPlaceholders.SUPPORT_EMAIL,
+          registeredAddress: legal.REGISTERED_ADDRESS ?? defaultLegalPlaceholders.REGISTERED_ADDRESS,
+          businessNumber: legal.BUSINESS_NUMBER ?? defaultLegalPlaceholders.BUSINESS_NUMBER,
+          contactPhone: legal.CONTACT_PHONE ?? defaultLegalPlaceholders.CONTACT_PHONE
         }}
       />
 

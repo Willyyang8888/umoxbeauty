@@ -1,10 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { getSiteContent } from "@/lib/content";
+import { defaultLegalPlaceholders, getSiteContent } from "@/lib/content";
 
 export default async function AboutPage() {
   const content = await getSiteContent();
-  const placeholders = (content.legalPlaceholders ?? {}) as Record<string, string>;
-  const companyName = placeholders.LEGAL_COMPANY_NAME ?? "[LEGAL_COMPANY_NAME]";
+  const placeholders = (content.legalPlaceholders ?? defaultLegalPlaceholders) as Record<string, string>;
+  const companyName = placeholders.LEGAL_COMPANY_NAME ?? defaultLegalPlaceholders.LEGAL_COMPANY_NAME;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
@@ -50,6 +50,16 @@ export default async function AboutPage() {
             and are not eligible for Canadian charitable donation tax receipts. Umox Beauty provides
             general beauty, cosmetic, and styling information, not medical or dermatological advice.
           </p>
+        </Card>
+        <Card>
+          <p className="text-sm font-semibold text-ink">Operator details</p>
+          <div className="mt-3 space-y-2 text-sm leading-7 text-zinc-600">
+            <p>Legal company name: {placeholders.LEGAL_COMPANY_NAME}</p>
+            <p>Business number: {placeholders.BUSINESS_NUMBER}</p>
+            <p>Business address: {placeholders.REGISTERED_ADDRESS}</p>
+            <p>Support email: {placeholders.SUPPORT_EMAIL}</p>
+            <p>Phone: {placeholders.CONTACT_PHONE}</p>
+          </div>
         </Card>
       </div>
 

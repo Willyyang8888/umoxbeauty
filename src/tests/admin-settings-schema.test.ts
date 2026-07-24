@@ -18,17 +18,18 @@ describe("admin settings validation", () => {
 
   it("accepts valid content settings", () => {
     const parsed = contentSettingsSchema.parse({
-      siteName: "Project Support Site",
+      siteName: "Umox Beauty",
+      legalCompanyName: "1498780 B.C. LTD.",
       supportLabel: "Support",
-      homepageTitle: "Support a company-operated project with clarity and trust",
+      homepageTitle: "Support the development of Umox Beauty",
       homepageSubtitle:
-        "This site is run directly by its Canadian operating company and accepts direct project support by credit card.",
-      projectPurpose: "Support a single company-operated project.",
-      fundUsageDescription: "Funds are used for product development and operations.",
-      supportEmail: "support@example.com",
-      registeredAddress: "123 Main Street",
-      businessNumber: "BN-12345",
-      contactPhone: "+1 111 111 1111"
+        "Umox Beauty is an independently developed beauty recommendation application created to help users make everyday makeup and beauty decisions more easily and confidently.",
+      projectPurpose: "To develop and operate Umox Beauty as an independent beauty recommendation application.",
+      fundUsageDescription: "Funds are used for development, infrastructure, testing, hosting, and operations.",
+      supportEmail: "yzyzoey0105@gmail.com",
+      registeredAddress: "4837 Gilpin Ct, Burnaby, BC V5G 3A2, Canada",
+      businessNumber: "752706424BC0001",
+      contactPhone: "+1 778-874-1182"
     });
 
     expect(parsed.supportLabel).toBe("Support");

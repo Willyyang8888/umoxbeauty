@@ -35,6 +35,7 @@ export const gatewaySettingsSchema = z.object({
 
 export const contentSettingsSchema = z.object({
   siteName: z.string().trim().min(2).max(120),
+  legalCompanyName: z.string().trim().min(2).max(160),
   supportLabel: z.enum(["Support", "Contribution", "Project Funding", "Donation"]),
   homepageTitle: z.string().trim().min(10).max(200),
   homepageSubtitle: z.string().trim().min(20).max(400),

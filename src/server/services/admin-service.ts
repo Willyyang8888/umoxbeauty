@@ -318,7 +318,7 @@ export async function saveContentSettings(adminUserId: string, rawInput: unknown
     defaultCurrency: "CAD",
     presetAmounts: [1000, 2500, 5000, 10000],
     legalPlaceholders: {
-      LEGAL_COMPANY_NAME: input.siteName,
+      LEGAL_COMPANY_NAME: input.legalCompanyName,
       BUSINESS_NUMBER: input.businessNumber,
       REGISTERED_ADDRESS: input.registeredAddress,
       SUPPORT_EMAIL: input.supportEmail,
@@ -355,6 +355,7 @@ export async function saveContentSettings(adminUserId: string, rawInput: unknown
     entityId: existing?.id,
     metadata: {
       siteName: input.siteName,
+      legalCompanyName: input.legalCompanyName,
       supportLabel: input.supportLabel
     }
   });

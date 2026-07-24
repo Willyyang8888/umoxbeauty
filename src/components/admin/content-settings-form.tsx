@@ -9,6 +9,7 @@ import { Input, Textarea } from "@/components/ui/field";
 type ContentSettingsFormProps = {
   initialValues: {
     siteName: string;
+    legalCompanyName: string;
     supportLabel: "Support" | "Contribution" | "Project Funding" | "Donation";
     homepageTitle: string;
     homepageSubtitle: string;
@@ -67,6 +68,21 @@ export function ContentSettingsForm({ initialValues }: ContentSettingsFormProps)
               onChange={(event) => setState((current) => ({ ...current, siteName: event.target.value }))}
             />
           </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="legalCompanyName">
+              Legal company name
+            </label>
+            <Input
+              id="legalCompanyName"
+              value={state.legalCompanyName}
+              onChange={(event) =>
+                setState((current) => ({ ...current, legalCompanyName: event.target.value }))
+              }
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="supportLabel">
               Support label

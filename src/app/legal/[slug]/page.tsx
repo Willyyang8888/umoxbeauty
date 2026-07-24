@@ -8,17 +8,21 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
   "terms-of-use": {
     title: "Terms of Use",
     body: [
-      "This website is operated by [LEGAL_COMPANY_NAME]. It presents the operator's own project and is not a public fundraising marketplace.",
-      "Users must provide accurate information when submitting support and must not attempt fraudulent or unauthorized payment activity.",
-      "The operator may suspend access or cancel transactions where fraud, abuse, legal non-compliance, or payment processor restrictions apply."
+      "This website is operated by [LEGAL_COMPANY_NAME], business number [BUSINESS_NUMBER], with a public business address at [REGISTERED_ADDRESS]. It presents the operator's own project and is not a public fundraising marketplace.",
+      "By using this website, you agree to provide accurate information, use the service lawfully, and avoid fraudulent, abusive, or unauthorized payment activity.",
+      "Support payments made through this website are voluntary project support payments. They do not create equity, profit-sharing rights, repayment rights, or any ownership interest in the operator or the Umox Beauty project.",
+      "The operator may suspend access, cancel transactions, decline support submissions, or limit use of the website where fraud, abuse, legal non-compliance, security concerns, or payment processor restrictions apply.",
+      "Questions about these terms may be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
     ]
   },
   "privacy-policy": {
     title: "Privacy Policy",
     body: [
-      "The site collects only the information needed to process support, communicate with contributors, and maintain compliance, including name, email, amount, and permitted payment summaries.",
-      "The site does not collect SIN, government identity documents, full card numbers, CVV, or unnecessary birth dates.",
-      "Privacy requests may be sent to [SUPPORT_EMAIL]."
+      "The site collects only the information reasonably needed to process support, communicate with contributors, operate the project, maintain security, and meet legal or payment compliance requirements. This may include name, email, amount, message content, transaction references, and permitted payment summaries.",
+      "Card details are handled by approved third-party payment providers such as Stripe and, when configured, Moneris. The operator does not store full card numbers or CVV values on its own servers.",
+      "The site does not request SIN, government identity documents, or other unnecessary personal information for ordinary project support transactions.",
+      "Submitted information may be used for support processing, receipts, customer service, fraud review, refund review, internal reporting, and legal compliance.",
+      "Privacy requests, correction requests, or deletion requests may be sent to [SUPPORT_EMAIL] or by using the contact page."
     ]
   },
   "payment-policy": {
@@ -32,9 +36,11 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
   "refund-policy": {
     title: "Refund Policy",
     body: [
-      "Refund requests are reviewed according to the operator's policy and payment processor rules.",
-      "Approved refunds may be full or partial and are logged with administrative audit details.",
-      "Questions about refunds should be directed to [SUPPORT_EMAIL]."
+      "Support payments are voluntary and are generally intended to help fund the development and operation of the Umox Beauty project. Refunds are therefore not automatically guaranteed in all cases.",
+      "Refund requests are reviewed case by case according to the operator's policy, payment processor rules, transaction records, and the circumstances of the request.",
+      "Where appropriate, the operator may issue a full or partial refund for reasons such as duplicate payments, technical processing errors, unauthorized transactions, or other exceptional cases.",
+      "Approved refunds are sent back to the original payment method whenever the payment processor allows it, and refund timing may depend on the card issuer or payment provider.",
+      "Questions about refunds should be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
     ]
   },
   "cookie-policy": {
@@ -48,9 +54,10 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
   "funding-disclosure": {
     title: "Funding / Contribution Disclosure",
     body: [
-      "Payments on this site support the operator's own project and are not held on behalf of third-party campaign creators.",
-      "The site should not describe ordinary commercial support as a charitable tax-deductible donation unless valid charitable registration and receipt rules are configured.",
-      "Current project purpose: [PROJECT_PURPOSE]. Current funding use: [FUND_USAGE_DESCRIPTION]."
+      "Payments on this site support the operator's own project and are not held on behalf of third-party campaign creators, charities, or unrelated beneficiaries.",
+      "The site should not describe ordinary project support as a charitable tax-deductible donation unless valid charitable registration and receipt rules are separately configured.",
+      "Current project purpose: [PROJECT_PURPOSE]. Current funding use: [FUND_USAGE_DESCRIPTION].",
+      "The operator for this site is [LEGAL_COMPANY_NAME], and public inquiries may be directed to [SUPPORT_EMAIL]."
     ]
   }
 };
