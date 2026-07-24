@@ -68,7 +68,7 @@ describe("release readiness", () => {
     const readiness = await getReleaseReadiness();
 
     expect(readiness.canPublishToProduction).toBe(false);
-    expect(readiness.blockers.some((item) => item.includes("法律"))).toBe(true);
+    expect(readiness.blockers.some((item) => item.toLowerCase().includes("legal"))).toBe(true);
   });
 
   it("passes when required checks are satisfied", async () => {
