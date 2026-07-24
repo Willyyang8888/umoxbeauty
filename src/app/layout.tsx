@@ -5,8 +5,12 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
-  title: "Project Support Site",
-  description: "A direct support website operated by a single Canadian company."
+  title: {
+    default: "Umox Beauty",
+    template: "%s | Umox Beauty"
+  },
+  description:
+    "Umox Beauty is a direct project support website operated by 1498780 B.C. LTD., a Canadian company."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

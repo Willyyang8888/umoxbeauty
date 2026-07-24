@@ -39,8 +39,9 @@ export default async function AboutPage() {
         <Card>
           <p className="text-sm font-semibold text-ink">Who operates the project</p>
           <p className="mt-3 text-sm leading-7 text-zinc-600">
-            The project is operated and developed by {companyName}, a Canadian company. Visitors may
-            voluntarily support the continued development and operation of the application.
+            The project is operated and developed by the Canadian company {companyName}, and
+            visitors may voluntarily support the continued development and operation of the
+            application through this official project website.
           </p>
         </Card>
         <Card>
@@ -89,24 +90,24 @@ export default async function AboutPage() {
 
         <Card>
           <p className="text-sm font-semibold text-ink">How Support Is Used</p>
-          <ul className="mt-3 space-y-2 text-sm leading-7 text-zinc-600">
-            <li>- User experience and interface design</li>
-            <li>- Mobile and web application development</li>
-            <li>- Artificial intelligence and recommendation services</li>
-            <li>- Cloud infrastructure and database services</li>
-            <li>- Beauty product and cosmetic colour database development</li>
-            <li>- Makeup look and product-category recommendation systems</li>
-            <li>- Image processing and colour-matching technology</li>
-            <li>- Security, testing, and quality assurance</li>
-            <li>- User research and product testing</li>
-            <li>- Software subscriptions and development tools</li>
-            <li>- Website hosting and domain expenses</li>
-            <li>- Translation and localization</li>
-            <li>- Project-related legal, accounting, and administrative costs</li>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-zinc-600">
+            <li>User experience and interface design</li>
+            <li>Mobile and web application development</li>
+            <li>Artificial intelligence and recommendation services</li>
+            <li>Cloud infrastructure and database services</li>
+            <li>Beauty product and cosmetic colour database development</li>
+            <li>Makeup look and product-category recommendation systems</li>
+            <li>Image processing and colour-matching technology</li>
+            <li>Security, testing, and quality assurance</li>
+            <li>User research and product testing</li>
+            <li>Software subscriptions and development tools</li>
+            <li>Website hosting and domain expenses</li>
+            <li>Translation and localization</li>
+            <li>Project-related legal, accounting, and administrative costs</li>
           </ul>
           <p className="mt-4 text-sm leading-7 text-zinc-600">
-            Funds are received and managed by {companyName}. Contributions are not collected on
-            behalf of third parties and are not distributed through a public fundraising platform.
+            Funds are received and managed by the operator, {companyName}, and are not collected on
+            behalf of third parties or distributed through a public fundraising platform.
           </p>
         </Card>
       </div>
