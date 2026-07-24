@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { requireAdmin } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 
 const links = [
   { href: "/admin", label: "Dashboard" },
@@ -13,13 +13,15 @@ const links = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await requireAdmin();
+  const session = await auth();
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 lg:grid-cols-[240px_1fr]">
       <aside className="rounded-panel border border-black/5 bg-white p-5 shadow-panel">
         <p className="text-xs font-semibold tracking-[0.2em] text-brand uppercase">Admin</p>
-        <p className="mt-3 text-sm font-semibold text-ink">{session.user.name ?? session.user.email}</p>
+        <p className="mt-3 text-sm font-semibold text-ink">
+          {session?.user?.name ?? session?.user?.email ?? "Administrator"}
+        </p>
         <div className="mt-6 space-y-2 text-sm text-zinc-600">
           {links.map((link) => (
             <Link
