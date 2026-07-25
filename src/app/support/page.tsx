@@ -43,7 +43,9 @@ export default async function SupportPage({
               <li>Default settlement currency: CAD</li>
               <li>Default gateway: {gatewayOptions.defaultGateway}</li>
               <li>Enabled gateways: {gatewayOptions.enabledGateways.join(", ")}</li>
-              <li>Moneris test mode uses an internal simulated hosted checkout flow</li>
+              {gatewayOptions.enabledGateways.includes(PaymentGatewayName.MONERIS) ? (
+                <li>Moneris test mode uses an internal simulated hosted checkout flow</li>
+              ) : null}
               <li>No tax receipt language by default</li>
             </ul>
           </Card>

@@ -60,7 +60,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
       "Payments made through this website support the operator's own project, Umox Beauty. Funds are received and controlled by [LEGAL_COMPANY_NAME] and are not collected on behalf of third-party campaign creators, charities, public fundraising platforms, or unrelated beneficiaries.",
       "A support payment or contribution made through this website is voluntary. It does not create equity, profit-sharing rights, debt, repayment rights, ownership interests, or any contractual entitlement to future products, services, or financial returns unless expressly stated elsewhere in writing.",
       "The site should not describe ordinary project support as a charitable or tax-deductible donation unless valid charitable registration information and lawful receipt practices are separately configured and clearly disclosed.",
-      "Current project purpose: [PROJECT_PURPOSE]. Current funding use: [FUND_USAGE_DESCRIPTION].",
+      "Current project purpose: [PROJECT_PURPOSE] Current funding use: [FUND_USAGE_DESCRIPTION]",
       "Public questions about project support, contributions, privacy, or refunds may be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
     ]
   }
