@@ -28,9 +28,11 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
   "payment-policy": {
     title: "Payment Policy",
     body: [
-      "Credit card payments are processed through approved third-party processors such as Stripe and, when configured, Moneris.",
-      "Support status is determined by server-side records and verified webhooks rather than front-end redirects alone.",
-      "Minimum and maximum amounts are enforced server-side."
+      "This website accepts one-time voluntary support payments for the operator's own software project, Umox Beauty. Payments are processed in Canadian dollars unless another currency is clearly presented at checkout.",
+      "Credit card payments are processed through approved third-party payment processors such as Stripe and, when configured, Moneris. The operator does not store full card numbers or CVV values on its own servers.",
+      "A payment is not treated as successful solely because a customer is redirected back to the website. Final payment status is determined by the operator's server-side records and verified payment processor notifications, including webhooks where applicable.",
+      "Minimum and maximum payment amounts are enforced server-side. The operator may decline, cancel, or review a payment attempt where fraud, abuse, technical error, sanctions screening, card issuer restrictions, or payment processor requirements apply.",
+      "Support payments made through this website are not charitable donations for Canadian income tax receipt purposes unless the operator separately publishes valid charitable registration information and expressly states that official charitable receipts are available."
     ]
   },
   "refund-policy": {
@@ -46,18 +48,20 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
   "cookie-policy": {
     title: "Cookie Policy",
     body: [
-      "The site uses essential cookies for security and administrator authentication.",
-      "Non-essential analytics or marketing cookies should not be enabled without user consent and proper disclosure.",
-      "This first version aims to minimize optional tracking."
+      "This website uses essential cookies and similar technologies that are necessary for core site functions such as security, fraud prevention, session handling, and administrator authentication.",
+      "These essential technologies help the operator keep the website available, protect payment and account workflows, and remember limited session state needed for secure operation.",
+      "The operator aims to minimize optional tracking. Non-essential analytics, advertising, or marketing cookies should not be enabled without appropriate disclosure and, where legally required, user consent.",
+      "If optional cookies or analytics tools are added in the future, this policy should be updated to explain what is used, why it is used, and what choices users have."
     ]
   },
   "funding-disclosure": {
     title: "Funding / Contribution Disclosure",
     body: [
-      "Payments on this site support the operator's own project and are not held on behalf of third-party campaign creators, charities, or unrelated beneficiaries.",
-      "The site should not describe ordinary project support as a charitable tax-deductible donation unless valid charitable registration and receipt rules are separately configured.",
+      "Payments made through this website support the operator's own project, Umox Beauty. Funds are received and controlled by [LEGAL_COMPANY_NAME] and are not collected on behalf of third-party campaign creators, charities, public fundraising platforms, or unrelated beneficiaries.",
+      "A support payment or contribution made through this website is voluntary. It does not create equity, profit-sharing rights, debt, repayment rights, ownership interests, or any contractual entitlement to future products, services, or financial returns unless expressly stated elsewhere in writing.",
+      "The site should not describe ordinary project support as a charitable or tax-deductible donation unless valid charitable registration information and lawful receipt practices are separately configured and clearly disclosed.",
       "Current project purpose: [PROJECT_PURPOSE]. Current funding use: [FUND_USAGE_DESCRIPTION].",
-      "The operator for this site is [LEGAL_COMPANY_NAME], and public inquiries may be directed to [SUPPORT_EMAIL]."
+      "Public questions about project support, contributions, privacy, or refunds may be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
     ]
   }
 };
