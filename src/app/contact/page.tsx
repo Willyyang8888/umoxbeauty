@@ -10,10 +10,10 @@ export default async function ContactPage() {
     <div className="mx-auto max-w-5xl px-6 py-12">
       <div className="max-w-2xl">
         <p className="text-xs font-semibold tracking-[0.22em] text-brand uppercase">Contact</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink">Reach the operating team</h1>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink">Contact us</h1>
         <p className="mt-4 text-base leading-8 text-zinc-600">
-          Use the contact form for support questions, privacy requests, or business inquiries. The
-          form includes a simple anti-spam field and server-side validation.
+          For support questions, privacy requests, refund requests, or business inquiries, send us
+          a message below.
         </p>
       </div>
 
@@ -26,7 +26,6 @@ export default async function ContactPage() {
             <p>Email: {placeholders.SUPPORT_EMAIL}</p>
             <p>Business address: {placeholders.REGISTERED_ADDRESS}</p>
             <p>Business number: {placeholders.BUSINESS_NUMBER}</p>
-            <p>Phone: {placeholders.CONTACT_PHONE}</p>
             <p>
               Privacy requests, support questions, and business inquiries may be sent through the
               same contact channel.

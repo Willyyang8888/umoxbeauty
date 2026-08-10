@@ -59,7 +59,6 @@ export default async function AboutPage() {
             <p>Business number: {placeholders.BUSINESS_NUMBER}</p>
             <p>Business address: {placeholders.REGISTERED_ADDRESS}</p>
             <p>Support email: {placeholders.SUPPORT_EMAIL}</p>
-            <p>Phone: {placeholders.CONTACT_PHONE}</p>
           </div>
         </Card>
       </div>

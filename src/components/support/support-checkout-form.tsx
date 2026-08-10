@@ -262,8 +262,7 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
         <div>
           <p className="text-sm font-semibold text-ink">Credit card payment</p>
           <p className="mt-2 text-sm leading-7 text-zinc-600">
-            Card details are handled by Stripe&apos;s hosted payment element. The final payment result
-            is confirmed by server-side webhook processing.
+            Card details are handled by Stripe&apos;s hosted payment element.
           </p>
         </div>
         <div className="rounded-2xl border border-black/10 bg-white p-4">

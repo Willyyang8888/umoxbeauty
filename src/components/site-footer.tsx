@@ -3,6 +3,7 @@ import Link from "next/link";
 import { defaultLegalPlaceholders, getSiteContent, hasMissingLegalPlaceholders } from "@/lib/content";
 
 const legalLinks = [
+  { slug: "contact", label: "Contact", external: true },
   { slug: "terms-of-use", label: "Terms of Use" },
   { slug: "privacy-policy", label: "Privacy Policy" },
   { slug: "payment-policy", label: "Payment Policy" },
@@ -27,9 +28,6 @@ export async function SiteFooter() {
               a third-party fundraising marketplace and does not imply tax-deductible status unless
               explicitly configured.
             </p>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Contact: {placeholders.SUPPORT_EMAIL} | {placeholders.CONTACT_PHONE}
-            </p>
           </div>
           {hasMissing ? (
             <p className="rounded-full bg-amber-100 px-4 py-2 text-xs font-medium text-amber-800">
@@ -38,11 +36,17 @@ export async function SiteFooter() {
           ) : null}
         </div>
         <div className="mt-6 flex flex-wrap gap-4 text-sm text-zinc-600">
-          {legalLinks.map((item) => (
-            <Link key={item.slug} href={`/legal/${item.slug}`}>
-              {item.label}
-            </Link>
-          ))}
+          {legalLinks.map((item) =>
+            item.external ? (
+              <Link key={item.slug} href={`/${item.slug}`}>
+                {item.label}
+              </Link>
+            ) : (
+              <Link key={item.slug} href={`/legal/${item.slug}`}>
+                {item.label}
+              </Link>
+            )
+          )}
         </div>
       </div>
     </footer>

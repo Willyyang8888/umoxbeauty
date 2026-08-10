@@ -9,7 +9,7 @@ import { getSiteContent } from "@/lib/content";
 import { getSupportPageGatewayOptions } from "@/server/services/support-service";
 
 const trustItems = [
-  { icon: Shield, label: "Canadian company operated" },
+  { icon: Shield, label: "Operated by a Canadian company" },
   { icon: Lock, label: "Secure processing" },
   { icon: CreditCard, label: "One-time CAD payment" }
 ];

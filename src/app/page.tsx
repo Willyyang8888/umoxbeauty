@@ -38,7 +38,7 @@ const supportAreas = [
 ];
 
 const trustStrip = [
-  { icon: Shield, label: "Canadian company operated" },
+  { icon: Shield, label: "Operated by a Canadian company" },
   { icon: Lock, label: "Secure card processing" },
   { icon: CreditCard, label: "One-time payment only" },
   { icon: Heart, label: "Voluntary project support" }
@@ -116,8 +116,8 @@ export default async function HomePage() {
                 Help us build Umox Beauty
               </h2>
               <p className="mt-4 text-sm leading-7 text-zinc-600">
-                Every contribution helps the independent team behind Umox Beauty continue
-                designing, building, and improving the app for its users.
+                Every contribution helps support the continued development and improvement of
+                Umox Beauty.
               </p>
               <Link
                 href="/support"

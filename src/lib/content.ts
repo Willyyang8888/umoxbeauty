@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 const BRAND_SUPPORT_EMAIL = "support@umoxbeauty.com";
-const FALLBACK_SUPPORT_EMAIL = "yzyzoey0105@gmail.com";
+const FALLBACK_SUPPORT_EMAIL = "yzyzoey19960105@outlook.com";
 
 function resolveSupportEmail(): string {
   const envOverride = process.env.BRAND_SUPPORT_EMAIL;

@@ -12,7 +12,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
       "By using this website, you agree to provide accurate information, use the service lawfully, and avoid fraudulent, abusive, or unauthorized payment activity.",
       "Support payments made through this website are voluntary project support payments. They do not create equity, profit-sharing rights, repayment rights, or any ownership interest in the operator or the Umox Beauty project.",
       "The operator may suspend access, cancel transactions, decline support submissions, or limit use of the website where fraud, abuse, legal non-compliance, security concerns, or payment processor restrictions apply.",
-      "Questions about these terms may be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
+      "Questions about these terms may be directed to [SUPPORT_EMAIL] or through the contact page."
     ]
   },
   "privacy-policy": {
@@ -42,7 +42,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
       "Refund requests are reviewed case by case according to the operator's policy, payment processor rules, transaction records, and the circumstances of the request.",
       "Where appropriate, the operator may issue a full or partial refund for reasons such as duplicate payments, technical processing errors, unauthorized transactions, or other exceptional cases.",
       "Approved refunds are sent back to the original payment method whenever the payment processor allows it, and refund timing may depend on the card issuer or payment provider.",
-      "Questions about refunds should be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
+      "Questions about refunds should be directed to [SUPPORT_EMAIL] or through the contact page."
     ]
   },
   "cookie-policy": {
@@ -59,9 +59,9 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
     body: [
       "Payments made through this website support the operator's own project, Umox Beauty. Funds are received and controlled by [LEGAL_COMPANY_NAME] and are not collected on behalf of third-party campaign creators, charities, public fundraising platforms, or unrelated beneficiaries.",
       "A support payment or contribution made through this website is voluntary. It does not create equity, profit-sharing rights, debt, repayment rights, ownership interests, or any contractual entitlement to future products, services, or financial returns unless expressly stated elsewhere in writing.",
-      "The site should not describe ordinary project support as a charitable or tax-deductible donation unless valid charitable registration information and lawful receipt practices are separately configured and clearly disclosed.",
+      "Support payments are not charitable or tax-deductible donations, and no Canadian charitable tax receipt is issued.",
       "Current project purpose: [PROJECT_PURPOSE] Current funding use: [FUND_USAGE_DESCRIPTION]",
-      "Public questions about project support, contributions, privacy, or refunds may be directed to [SUPPORT_EMAIL] or [CONTACT_PHONE]."
+      "Public questions about project support, contributions, privacy, or refunds may be directed to [SUPPORT_EMAIL] or through the contact page."
     ]
   }
 };
