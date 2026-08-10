@@ -91,19 +91,11 @@ export default async function AboutPage() {
         <Card>
           <p className="text-sm font-semibold text-ink">How Support Is Used</p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-zinc-600">
-            <li>User experience and interface design</li>
-            <li>Mobile and web application development</li>
-            <li>Artificial intelligence and recommendation services</li>
-            <li>Cloud infrastructure and database services</li>
-            <li>Beauty product and cosmetic colour database development</li>
-            <li>Makeup look and product-category recommendation systems</li>
-            <li>Image processing and colour-matching technology</li>
-            <li>Security, testing, and quality assurance</li>
-            <li>User research and product testing</li>
-            <li>Software subscriptions and development tools</li>
-            <li>Website hosting and domain expenses</li>
-            <li>Translation and localization</li>
-            <li>Project-related legal, accounting, and administrative costs</li>
+            <li>Product and app development</li>
+            <li>AI and recommendation technology</li>
+            <li>Cloud infrastructure and databases</li>
+            <li>Testing, security and localization</li>
+            <li>Project operating and administrative costs</li>
           </ul>
           <p className="mt-4 text-sm leading-7 text-zinc-600">
             Funds are received and managed by the operator, {companyName}, and are not collected on

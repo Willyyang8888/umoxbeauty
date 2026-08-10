@@ -29,7 +29,6 @@ export function SupportCheckoutForm({
   presetAmounts,
   stripeEnabled,
   stripePublishableKey,
-  enabledGateways,
   initialGateway
 }: SupportCheckoutFormProps) {
   const [amount, setAmount] = useState(presetAmounts[1] ?? 2500);
@@ -38,7 +37,7 @@ export function SupportCheckoutForm({
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [preferredGateway, setPreferredGateway] = useState<PaymentGatewayName>(initialGateway);
+  const [preferredGateway] = useState<PaymentGatewayName>(initialGateway);
   const [formData, setFormData] = useState({
     donorName: "",
     donorEmail: "",
@@ -105,42 +104,6 @@ export function SupportCheckoutForm({
       <Card>
         <form className="space-y-5" onSubmit={handleCreateIntent}>
           <div>
-            <p className="text-sm font-semibold text-ink">Choose a payment gateway</p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setPreferredGateway("STRIPE")}
-                disabled={!enabledGateways.includes("STRIPE")}
-                className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
-                  preferredGateway === "STRIPE"
-                    ? "border-brand bg-brand-soft text-brand-dark"
-                    : "border-black/10 bg-white text-ink"
-                } disabled:cursor-not-allowed disabled:opacity-50`}
-              >
-                <span className="block font-semibold">Stripe</span>
-                <span className="mt-1 block text-zinc-600">
-                  Hosted Payment Element with webhook-confirmed status.
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreferredGateway("MONERIS")}
-                disabled={!enabledGateways.includes("MONERIS")}
-                className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
-                  preferredGateway === "MONERIS"
-                    ? "border-brand bg-brand-soft text-brand-dark"
-                    : "border-black/10 bg-white text-ink"
-                } disabled:cursor-not-allowed disabled:opacity-50`}
-              >
-                <span className="block font-semibold">Moneris</span>
-                <span className="mt-1 block text-zinc-600">
-                  Internal test-mode simulation until merchant product configuration is confirmed.
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div>
             <p className="text-sm font-semibold text-ink">Choose an amount</p>
             <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
               {presetAmounts.map((preset) => (
@@ -176,29 +139,32 @@ export function SupportCheckoutForm({
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorName">
-                Full name
-              </label>
-              <Input
-                id="donorName"
-                value={formData.donorName}
-                onChange={(event) => setFormData((current) => ({ ...current, donorName: event.target.value }))}
-                required
-              />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorEmail">
-                Email
-              </label>
-              <Input
-                id="donorEmail"
-                type="email"
-                value={formData.donorEmail}
-                onChange={(event) => setFormData((current) => ({ ...current, donorEmail: event.target.value }))}
-                required
-              />
+          <div>
+            <p className="text-sm font-semibold text-ink">Your details</p>
+            <div className="mt-3 grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorName">
+                  Full name
+                </label>
+                <Input
+                  id="donorName"
+                  value={formData.donorName}
+                  onChange={(event) => setFormData((current) => ({ ...current, donorName: event.target.value }))}
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorEmail">
+                  Email
+                </label>
+                <Input
+                  id="donorEmail"
+                  type="email"
+                  value={formData.donorEmail}
+                  onChange={(event) => setFormData((current) => ({ ...current, donorEmail: event.target.value }))}
+                  required
+                />
+              </div>
             </div>
           </div>
 
@@ -221,7 +187,7 @@ export function SupportCheckoutForm({
               checked={formData.isAnonymous}
               onChange={(event) => setFormData((current) => ({ ...current, isAnonymous: event.target.checked }))}
             />
-            Display my support anonymously in any future supporter acknowledgements.
+            Display my support anonymously in future supporter acknowledgements.
           </label>
 
           <label className="flex items-start gap-3 rounded-2xl border border-black/10 bg-zinc-50 p-4 text-sm text-zinc-700">
@@ -237,9 +203,14 @@ export function SupportCheckoutForm({
 
           {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 
-          <Button type="submit" disabled={loading}>
-            {loading ? "Preparing secure payment..." : preferredGateway === "MONERIS" ? "Continue to Moneris test checkout" : "Continue to secure payment"}
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Preparing secure payment..." : "Continue to Secure Payment"}
           </Button>
+
+          <div className="space-y-1 text-center text-xs text-zinc-500">
+            <p>Securely processed by Stripe.</p>
+            <p>One-time payment • CAD • No account required.</p>
+          </div>
         </form>
       </Card>
 
