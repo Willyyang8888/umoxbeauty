@@ -44,7 +44,7 @@ export const contentSettingsSchema = z.object({
   supportEmail: z.string().trim().email(),
   registeredAddress: z.string().trim().min(5).max(300),
   businessNumber: z.string().trim().min(2).max(60),
-  contactPhone: z.string().trim().min(5).max(40)
+  contactPhone: z.string().trim().min(0).max(40)
 });
 
 export function validateAmount(amount: number) {
