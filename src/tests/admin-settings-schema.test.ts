@@ -29,7 +29,7 @@ describe("admin settings validation", () => {
       supportEmail: "yzyzoey19960105@outlook.com",
       registeredAddress: "4837 Gilpin Ct, Burnaby, BC V5G 3A2, Canada",
       businessNumber: "752706424BC0001",
-      contactPhone: "+1 778-874-1182"
+      contactPhone: ""
     });
 
     expect(parsed.supportLabel).toBe("Support");
