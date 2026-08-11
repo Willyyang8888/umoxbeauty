@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { defaultLegalPlaceholders, getSiteContent, hasMissingLegalPlaceholders } from "@/lib/content";
 import { isProductionLikeEnvironment } from "@/lib/release-readiness";
 
+const LAST_UPDATED = "August 10, 2026";
+
 const legalContent: Record<string, { title: string; body: string[] }> = {
   "terms-of-use": {
     title: "Terms of Use",
@@ -19,7 +21,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
     title: "Privacy Policy",
     body: [
       "The site collects only the information reasonably needed to process support, communicate with contributors, operate the project, maintain security, and meet legal or payment compliance requirements. This may include name, email, amount, message content, transaction references, and permitted payment summaries.",
-      "Card details are handled by approved third-party payment providers such as Stripe and, when configured, Moneris. The operator does not store full card numbers or CVV values on its own servers.",
+      "Card details are handled by Stripe or other approved third-party payment providers. The operator does not store full card numbers or CVV values on its own servers.",
       "The site does not request SIN, government identity documents, or other unnecessary personal information for ordinary project support transactions.",
       "Submitted information may be used for support processing, receipts, customer service, fraud review, refund review, internal reporting, and legal compliance.",
       "Privacy requests, correction requests, or deletion requests may be sent to [SUPPORT_EMAIL] or by using the contact page."
@@ -29,7 +31,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
     title: "Payment Policy",
     body: [
       "This website accepts one-time voluntary support payments for the operator's own software project, Umox Beauty. Payments are processed in Canadian dollars unless another currency is clearly presented at checkout.",
-      "Credit card payments are processed through approved third-party payment processors such as Stripe and, when configured, Moneris. The operator does not store full card numbers or CVV values on its own servers.",
+      "Credit card payments are processed through Stripe or other approved third-party payment providers. The operator does not store full card numbers or CVV values on its own servers.",
       "A payment is not treated as successful solely because a customer is redirected back to the website. Final payment status is determined by the operator's server-side records and verified payment processor notifications, including webhooks where applicable.",
       "Minimum and maximum payment amounts are enforced server-side. The operator may decline, cancel, or review a payment attempt where fraud, abuse, technical error, sanctions screening, card issuer restrictions, or payment processor requirements apply.",
       "Support payments made through this website are not charitable donations for Canadian income tax receipt purposes unless the operator separately publishes valid charitable registration information and expressly states that official charitable receipts are available."
@@ -41,6 +43,7 @@ const legalContent: Record<string, { title: string; body: string[] }> = {
       "Support payments are voluntary and are generally intended to help fund the development and operation of the Umox Beauty project. Refunds are therefore not automatically guaranteed in all cases.",
       "Refund requests are reviewed case by case according to the operator's policy, payment processor rules, transaction records, and the circumstances of the request.",
       "Where appropriate, the operator may issue a full or partial refund for reasons such as duplicate payments, technical processing errors, unauthorized transactions, or other exceptional cases.",
+      "Refund requests may be submitted through our Contact page. Please include the email address used for the payment and the approximate payment date and amount.",
       "Approved refunds are sent back to the original payment method whenever the payment processor allows it, and refund timing may depend on the card issuer or payment provider.",
       "Questions about refunds should be directed to [SUPPORT_EMAIL] or through the contact page."
     ]
@@ -104,6 +107,9 @@ export default async function LegalPage({
         <div>
           <p className="text-xs font-semibold tracking-[0.22em] text-brand uppercase">Legal</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink">{page.title}</h1>
+          <p className="mt-3 text-xs font-medium leading-6 text-zinc-500">
+            Last updated: {LAST_UPDATED}
+          </p>
         </div>
         {page.body.map((paragraph) => (
           <p key={paragraph} className="text-sm leading-7 text-zinc-600">

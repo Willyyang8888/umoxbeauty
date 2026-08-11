@@ -24,9 +24,8 @@ export async function SiteFooter() {
           <div className="max-w-xl">
             <p className="text-sm font-semibold text-ink">{content.siteName}</p>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
-              Operated by {placeholders.LEGAL_COMPANY_NAME} for its own project. This website is not
-              a third-party fundraising marketplace and does not imply tax-deductible status unless
-              explicitly configured.
+              Umox Beauty is operated by {placeholders.LEGAL_COMPANY_NAME}. Support payments are
+              voluntary and are not charitable or tax-deductible donations.
             </p>
           </div>
           {hasMissing ? (
