@@ -26,7 +26,7 @@ describe("admin settings validation", () => {
         "Umox Beauty is an independently developed beauty recommendation application created to help users make everyday makeup and beauty decisions more easily and confidently.",
       projectPurpose: "To develop and operate Umox Beauty as an independent beauty recommendation application.",
       fundUsageDescription: "Funds are used for development, infrastructure, testing, hosting, and operations.",
-      supportEmail: "yzyzoey0105@gmail.com",
+      supportEmail: "yzyzoey19960105@outlook.com",
       registeredAddress: "4837 Gilpin Ct, Burnaby, BC V5G 3A2, Canada",
       businessNumber: "752706424BC0001",
       contactPhone: "+1 778-874-1182"

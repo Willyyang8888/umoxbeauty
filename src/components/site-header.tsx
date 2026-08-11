@@ -15,7 +15,7 @@ export async function SiteHeader() {
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/support" className="rounded-full bg-brand px-4 py-2 font-medium text-white">
-            Support This Project
+            Support Umox Beauty
           </Link>
         </nav>
       </div>

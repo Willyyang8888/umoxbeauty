@@ -39,7 +39,7 @@ const supportAreas = [
 
 const trustStrip = [
   { icon: Shield, label: "Operated by a Canadian company" },
-  { icon: Lock, label: "Secure card processing" },
+  { icon: Lock, label: "Secure payment processing" },
   { icon: CreditCard, label: "One-time payment only" },
   { icon: Heart, label: "Voluntary project support" }
 ];

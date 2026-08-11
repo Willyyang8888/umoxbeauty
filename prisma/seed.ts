@@ -81,7 +81,7 @@ async function main() {
         LEGAL_COMPANY_NAME: "1498780 B.C. LTD.",
         BUSINESS_NUMBER: "752706424BC0001",
         REGISTERED_ADDRESS: "4837 Gilpin Ct, Burnaby, BC V5G 3A2, Canada",
-        SUPPORT_EMAIL: "yzyzoey0105@gmail.com",
+        SUPPORT_EMAIL: "yzyzoey19960105@outlook.com",
         CONTACT_PHONE: "+1 778-874-1182",
         PROJECT_PURPOSE:
           "To develop and operate Umox Beauty, an independent beauty recommendation application that helps users make everyday makeup and beauty decisions more easily and confidently.",
@@ -107,7 +107,7 @@ async function main() {
         LEGAL_COMPANY_NAME: "1498780 B.C. LTD.",
         BUSINESS_NUMBER: "752706424BC0001",
         REGISTERED_ADDRESS: "4837 Gilpin Ct, Burnaby, BC V5G 3A2, Canada",
-        SUPPORT_EMAIL: "yzyzoey0105@gmail.com",
+        SUPPORT_EMAIL: "yzyzoey19960105@outlook.com",
         CONTACT_PHONE: "+1 778-874-1182",
         PROJECT_PURPOSE:
           "To develop and operate Umox Beauty, an independent beauty recommendation application that helps users make everyday makeup and beauty decisions more easily and confidently.",
