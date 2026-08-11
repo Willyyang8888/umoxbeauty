@@ -24,11 +24,9 @@ export default async function ContactPage() {
           <div className="mt-4 space-y-3 text-sm leading-7 text-zinc-600">
             <p>Operator: {placeholders.LEGAL_COMPANY_NAME}</p>
             <p>Email: {placeholders.SUPPORT_EMAIL}</p>
-            <p>Business address: {placeholders.REGISTERED_ADDRESS}</p>
-            <p>Business number: {placeholders.BUSINESS_NUMBER}</p>
             <p>
-              Privacy requests, support questions, and business inquiries may be sent through the
-              same contact channel.
+              Privacy requests, support questions, refund requests, and business inquiries may be
+              sent through the contact form or email above.
             </p>
           </div>
         </Card>

@@ -56,8 +56,6 @@ export default async function AboutPage() {
           <p className="text-sm font-semibold text-ink">Operator details</p>
           <div className="mt-3 space-y-2 text-sm leading-7 text-zinc-600">
             <p>Legal company name: {placeholders.LEGAL_COMPANY_NAME}</p>
-            <p>Business number: {placeholders.BUSINESS_NUMBER}</p>
-            <p>Business address: {placeholders.REGISTERED_ADDRESS}</p>
             <p>Support email: {placeholders.SUPPORT_EMAIL}</p>
           </div>
         </Card>
