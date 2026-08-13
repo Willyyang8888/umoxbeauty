@@ -64,15 +64,15 @@ export function SupportCheckoutForm({
   const selectedAmount = customAmount ? Math.round(Number(customAmount) * 100) : amount;
 
   const selectedAmountValid =
-    Number.isFinite(selectedAmount) && selectedAmount >= 1000 && selectedAmount <= 200000;
+    Number.isFinite(selectedAmount) && selectedAmount >= 100 && selectedAmount <= 200000;
 
   const customAmountInvalid =
     customAmount.trim() !== "" &&
-    (!Number.isFinite(selectedAmount) || selectedAmount < 1000 || selectedAmount > 200000);
+    (!Number.isFinite(selectedAmount) || selectedAmount < 100 || selectedAmount > 200000);
 
   async function createIntentNow() {
     if (!selectedAmountValid) {
-      setError(customAmount ? "Minimum custom support amount is $10.00 CAD." : null);
+      setError(customAmount ? "Minimum custom support amount is $1.00 CAD." : null);
       return false;
     }
     setBusy(true);
@@ -155,10 +155,10 @@ export function SupportCheckoutForm({
             <Input
               id="customAmount"
               type="number"
-              min="10"
+              min="1"
               max="2000"
               step="0.01"
-              placeholder="Enter a custom amount (minimum $10.00)"
+              placeholder="Enter a custom amount (minimum $1.00)"
               value={customAmount}
               aria-invalid={customAmountInvalid || undefined}
               className={
@@ -177,7 +177,7 @@ export function SupportCheckoutForm({
             />
             {customAmountInvalid ? (
               <p className="mt-2 text-sm font-medium text-red-600">
-                Minimum custom support amount is $10.00 CAD (maximum $2,000.00).
+                Minimum custom support amount is $1.00 CAD (maximum $2,000.00).
               </p>
             ) : null}
           </div>
@@ -235,7 +235,7 @@ export function SupportCheckoutForm({
               disabled={busy || !selectedAmountValid}
               title={
                 !selectedAmountValid && customAmount
-                  ? "Minimum custom support amount is $10.00 CAD."
+                  ? "Minimum custom support amount is $1.00 CAD."
                   : undefined
               }
               className="w-full"
@@ -244,7 +244,7 @@ export function SupportCheckoutForm({
             </Button>
             {!selectedAmountValid && customAmount ? (
               <p className="mt-2 text-center text-sm font-medium text-red-600">
-                Minimum custom support amount is $10.00 CAD.
+                Minimum custom support amount is $1.00 CAD.
               </p>
             ) : null}
           </div>

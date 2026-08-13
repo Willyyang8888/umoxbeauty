@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const minAmountCents = 1_000;
+export const minAmountCents = 100;
 export const maxAmountCents = 200_000;
 export const presetAmounts = [1_000, 2_500, 5_000, 10_000];
 
