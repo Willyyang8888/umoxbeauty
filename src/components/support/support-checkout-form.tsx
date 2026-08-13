@@ -51,6 +51,16 @@ export function SupportCheckoutForm({
     return loadStripe(stripePublishableKey);
   }, [stripeEnabled, stripePublishableKey]);
 
+  const elementsOptions = useMemo(() => {
+    if (!clientSecret) return undefined;
+    return {
+      clientSecret,
+      appearance: {
+        theme: "stripe" as const
+      }
+    };
+  }, [clientSecret]);
+
   async function handleCreateIntent(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
@@ -179,8 +189,8 @@ export function SupportCheckoutForm({
           </div>
         </form>
 
-        {clientSecret && checkout?.gateway === "STRIPE" && stripePromise ? (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
+        {clientSecret && checkout?.gateway === "STRIPE" && stripePromise && elementsOptions ? (
+          <Elements stripe={stripePromise} options={elementsOptions}>
             <StripeConfirmationPanel reference={checkout.reference} />
           </Elements>
         ) : null}
@@ -219,6 +229,21 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
       return;
     }
 
+    if (result.paymentIntent) {
+      const s = result.paymentIntent.status;
+      if (s === "succeeded" || s === "processing") {
+        window.location.href = `/support/${reference}/processing`;
+        return;
+      }
+      if (s === "requires_action") {
+        setSubmitting(false);
+        return;
+      }
+      setSubmitting(false);
+      setError("Payment was not completed. Please check your card details and try again.");
+      return;
+    }
+
     window.location.href = `/support/${reference}/processing`;
   }
 
@@ -231,7 +256,22 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
         </p>
       </div>
       <div className="rounded-2xl border border-black/10 bg-white p-4">
-        <PaymentElement />
+        <PaymentElement
+          options={{
+            layout: { type: "tabs" as const },
+            fields: {
+              billingDetails: {
+                name: "never",
+                email: "never",
+                phone: "never",
+                address: {
+                  country: "never",
+                  postalCode: "never"
+                }
+              }
+            }
+          } as any}
+        />
       </div>
       {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
       <Button type="submit" disabled={!stripe || submitting} className="w-full">

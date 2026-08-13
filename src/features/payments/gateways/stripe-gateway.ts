@@ -29,9 +29,7 @@ export class StripeGateway implements PaymentGateway {
       amount: input.amount,
       currency: input.currency.toLowerCase(),
       receipt_email: input.donorEmail,
-      automatic_payment_methods: {
-        enabled: true
-      },
+      payment_method_types: ["card"],
       metadata: {
         transactionId: input.transactionId,
         donorEmail: input.donorEmail,
