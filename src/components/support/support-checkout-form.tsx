@@ -249,9 +249,15 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
       setSubmitting(true);
       setError(null);
 
+      const timeoutId = window.setTimeout(() => {
+        setError("Payment is taking longer than expected. You can try again or check your bank for a pending charge.");
+        setSubmitting(false);
+      }, 20000);
+
       try {
         const submitResult = await elements.submit();
         if (submitResult.error) {
+          window.clearTimeout(timeoutId);
           setError(submitResult.error.message ?? "Please complete your card details.");
           setSubmitting(false);
           return;
@@ -261,9 +267,10 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
           elements,
           confirmParams: {
             return_url: `${window.location.origin}/support/${reference}/processing`
-          },
-          redirect: "if_required"
+          }
         });
+
+        window.clearTimeout(timeoutId);
 
         if (result.error) {
           setError(result.error.message ?? "Payment confirmation failed.");
@@ -273,12 +280,8 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
 
         if (result.paymentIntent) {
           const s = result.paymentIntent.status;
-          if (s === "succeeded" || s === "processing") {
+          if (s === "succeeded" || s === "processing" || s === "requires_action") {
             window.location.href = `/support/${reference}/processing`;
-            return;
-          }
-          if (s === "requires_action") {
-            setSubmitting(false);
             return;
           }
           if (s === "requires_payment_method") {
@@ -292,8 +295,10 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
         }
 
         window.location.href = `/support/${reference}/processing`;
-      } finally {
-        // no-op: states managed inside branches
+      } catch (err) {
+        window.clearTimeout(timeoutId);
+        setError(err instanceof Error ? err.message : "Payment confirmation failed.");
+        setSubmitting(false);
       }
     },
     [stripe, elements, reference]
