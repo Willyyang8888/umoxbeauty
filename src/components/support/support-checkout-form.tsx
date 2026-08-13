@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { PaymentGatewayName } from "@prisma/client";
@@ -35,15 +35,13 @@ export function SupportCheckoutForm({
   const [customAmount, setCustomAmount] = useState("");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null);
-  const [creatingIntent, setCreatingIntent] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [preferredGateway] = useState<PaymentGatewayName>(initialGateway);
   const [formData, setFormData] = useState({
     donorName: "",
     donorEmail: ""
   });
-  const formDataRef = useRef(formData);
-  formDataRef.current = formData;
 
   const stripePromise = useMemo(() => {
     if (!stripeEnabled || !stripePublishableKey) {
@@ -63,69 +61,59 @@ export function SupportCheckoutForm({
     };
   }, [clientSecret]);
 
-  const createIntentFor = useCallback(
-    async (selectedAmount: number, { dryRun }: { dryRun?: boolean } = {}) => {
-      const currentForm = formDataRef.current;
-      setCreatingIntent(true);
-      setCreateError(null);
+  const selectedAmount = customAmount ? Math.round(Number(customAmount) * 100) : amount;
 
-      try {
-        const response = await fetch("/api/support/checkout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            amount: selectedAmount,
-            currency: "CAD",
-            donorName: currentForm.donorName,
-            donorEmail: currentForm.donorEmail,
-            isAnonymous: false,
-            message: "",
-            termsAccepted: true,
-            preferredGateway
-          })
-        });
+  const selectedAmountValid =
+    Number.isFinite(selectedAmount) && selectedAmount >= 1000 && selectedAmount <= 200000;
 
-        const payload = await response.json();
+  async function createIntentNow() {
+    if (!selectedAmountValid) return false;
+    setBusy(true);
+    setError(null);
 
-        if (!response.ok) {
-          throw new Error(payload.error ?? "Unable to initialize payment.");
-        }
+    try {
+      const response = await fetch("/api/support/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: selectedAmount,
+          currency: "CAD",
+          donorName: formData.donorName,
+          donorEmail: formData.donorEmail,
+          isAnonymous: false,
+          message: "",
+          termsAccepted: true,
+          preferredGateway
+        })
+      });
 
-        if (dryRun) return;
+      const payload = await response.json();
 
-        setClientSecret(payload.clientSecret ?? null);
-        setCheckout(payload);
-
-        if (payload.gateway === "MONERIS" && payload.checkoutUrl) {
-          window.location.href = payload.checkoutUrl;
-          return;
-        }
-      } catch (requestError) {
-        if (!dryRun) {
-          setCreateError(requestError instanceof Error ? requestError.message : "Unable to initialize payment.");
-        }
-      } finally {
-        if (!dryRun) {
-          setCreatingIntent(false);
-        }
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to initialize payment.");
       }
-    },
-    [preferredGateway]
-  );
 
-  useEffect(() => {
-    const selectedAmount = customAmount ? Math.round(Number(customAmount) * 100) : amount;
-    if (!Number.isFinite(selectedAmount) || selectedAmount < 1000) {
-      setClientSecret(null);
-      setCheckout(null);
-      setCreateError(null);
-      return;
+      if (payload.gateway === "MONERIS" && payload.checkoutUrl) {
+        window.location.href = payload.checkoutUrl;
+        return false;
+      }
+
+      if (payload.clientSecret) {
+        setClientSecret(payload.clientSecret);
+        setCheckout(payload);
+        return true;
+      }
+
+      throw new Error("Unable to initialize payment.");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to initialize payment.");
+      return false;
+    } finally {
+      setBusy(false);
     }
-
-    createIntentFor(selectedAmount);
-  }, [amount, customAmount, preferredGateway, createIntentFor]);
+  }
 
   return (
     <div className="space-y-6">
@@ -146,6 +134,8 @@ export function SupportCheckoutForm({
                   onClick={() => {
                     setAmount(preset);
                     setCustomAmount("");
+                    setClientSecret(null);
+                    setCheckout(null);
                   }}
                 >
                   {formatCurrency(preset)}
@@ -163,7 +153,11 @@ export function SupportCheckoutForm({
               step="0.01"
               placeholder="Enter a custom amount"
               value={customAmount}
-              onChange={(event) => setCustomAmount(event.target.value)}
+              onChange={(event) => {
+                setCustomAmount(event.target.value);
+                setClientSecret(null);
+                setCheckout(null);
+              }}
             />
           </div>
 
@@ -178,7 +172,11 @@ export function SupportCheckoutForm({
                   id="donorName"
                   autoComplete="name"
                   value={formData.donorName}
-                  onChange={(event) => setFormData((current) => ({ ...current, donorName: event.target.value }))}
+                  onChange={(event) => {
+                    setFormData((current) => ({ ...current, donorName: event.target.value }));
+                    setClientSecret(null);
+                    setCheckout(null);
+                  }}
                 />
               </div>
               <div>
@@ -190,13 +188,17 @@ export function SupportCheckoutForm({
                   type="email"
                   autoComplete="email"
                   value={formData.donorEmail}
-                  onChange={(event) => setFormData((current) => ({ ...current, donorEmail: event.target.value }))}
+                  onChange={(event) => {
+                    setFormData((current) => ({ ...current, donorEmail: event.target.value }));
+                    setClientSecret(null);
+                    setCheckout(null);
+                  }}
                 />
               </div>
             </div>
           </div>
 
-          {createError ? <p className="text-sm font-medium text-red-600">{createError}</p> : null}
+          {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 
           <div className="space-y-1 text-center text-xs text-zinc-500">
             <p>Securely processed by Stripe.</p>
@@ -204,9 +206,25 @@ export function SupportCheckoutForm({
           </div>
         </div>
 
+        {!clientSecret ? (
+          <div className="mt-6 border-t border-black/5 pt-6">
+            <Button
+              type="button"
+              onClick={createIntentNow}
+              disabled={busy || !selectedAmountValid}
+              className="w-full"
+            >
+              {busy ? "Preparing secure payment..." : "Confirm donation"}
+            </Button>
+          </div>
+        ) : null}
+
         {clientSecret && checkout?.gateway === "STRIPE" && stripePromise && elementsOptions ? (
           <Elements stripe={stripePromise} options={elementsOptions}>
-            <StripeConfirmationPanel reference={checkout.reference} disabled={creatingIntent} />
+            <StripeConfirmationPanel
+              reference={checkout.reference}
+              disabled={busy}
+            />
           </Elements>
         ) : null}
       </Card>
@@ -220,47 +238,66 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    if (!stripe || !elements) {
-      return;
-    }
+      if (!stripe || !elements) {
+        return;
+      }
 
-    setSubmitting(true);
-    setError(null);
+      setSubmitting(true);
+      setError(null);
 
-    const result = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/support/${reference}/processing`
-      },
-      redirect: "if_required"
-    });
+      try {
+        const submitResult = await elements.submit();
+        if (submitResult.error) {
+          setError(submitResult.error.message ?? "Please complete your card details.");
+          setSubmitting(false);
+          return;
+        }
 
-    if (result.error) {
-      setError(result.error.message ?? "Payment confirmation failed.");
-      setSubmitting(false);
-      return;
-    }
+        const result = await stripe.confirmPayment({
+          elements,
+          confirmParams: {
+            return_url: `${window.location.origin}/support/${reference}/processing`
+          },
+          redirect: "if_required"
+        });
 
-    if (result.paymentIntent) {
-      const s = result.paymentIntent.status;
-      if (s === "succeeded" || s === "processing") {
+        if (result.error) {
+          setError(result.error.message ?? "Payment confirmation failed.");
+          setSubmitting(false);
+          return;
+        }
+
+        if (result.paymentIntent) {
+          const s = result.paymentIntent.status;
+          if (s === "succeeded" || s === "processing") {
+            window.location.href = `/support/${reference}/processing`;
+            return;
+          }
+          if (s === "requires_action") {
+            setSubmitting(false);
+            return;
+          }
+          if (s === "requires_payment_method") {
+            setError("Payment was not completed. Please check your card details and try again.");
+            setSubmitting(false);
+            return;
+          }
+          setError("Payment was not completed. Please check your card details and try again.");
+          setSubmitting(false);
+          return;
+        }
+
         window.location.href = `/support/${reference}/processing`;
-        return;
+      } finally {
+        // no-op: states managed inside branches
       }
-      if (s === "requires_action") {
-        setSubmitting(false);
-        return;
-      }
-      setSubmitting(false);
-      setError("Payment was not completed. Please check your card details and try again.");
-      return;
-    }
-
-    window.location.href = `/support/${reference}/processing`;
-  }
+    },
+    [stripe, elements, reference]
+  );
 
   return (
     <form className="mt-6 space-y-4 border-t border-black/5 pt-6" onSubmit={handleSubmit}>
@@ -268,6 +305,9 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
         <PaymentElement
           options={{
             layout: { type: "tabs" as const },
+            wallets: {
+              link: "never" as const
+            },
             fields: {
               billingDetails: {
                 name: "never",
