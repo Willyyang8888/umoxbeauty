@@ -169,11 +169,10 @@ export function SupportCheckoutForm({
 
           <div>
             <p className="text-sm font-semibold text-ink">Your details</p>
-            <p className="mt-2 text-xs text-zinc-500">Optional — leave blank for an anonymous support payment.</p>
             <div className="mt-3 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorName">
-                  Full name (optional)
+                  Full name
                 </label>
                 <Input
                   id="donorName"
@@ -184,7 +183,7 @@ export function SupportCheckoutForm({
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorEmail">
-                  Email (optional)
+                  Email
                 </label>
                 <Input
                   id="donorEmail"
