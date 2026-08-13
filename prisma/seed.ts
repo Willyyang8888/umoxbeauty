@@ -27,7 +27,7 @@ async function main() {
       nonSensitiveSettings: {
         publishableKeyConfigured: false,
         webhookConfigured: false,
-        minAmount: 1000,
+        minAmount: 100,
         maxAmount: 200000,
         defaultCurrency: "CAD",
         presetAmounts: [1000, 2500, 5000, 10000]
@@ -41,7 +41,7 @@ async function main() {
       nonSensitiveSettings: {
         publishableKeyConfigured: false,
         webhookConfigured: false,
-        minAmount: 1000,
+        minAmount: 100,
         maxAmount: 200000,
         defaultCurrency: "CAD",
         presetAmounts: [1000, 2500, 5000, 10000]

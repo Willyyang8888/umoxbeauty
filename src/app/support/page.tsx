@@ -90,6 +90,8 @@ export default async function SupportPage({
             stripePublishableKey={env.STRIPE_PUBLISHABLE_KEY ?? ""}
             enabledGateways={gatewayOptions.enabledGateways}
             initialGateway={initialGateway}
+            minAmountCents={gatewayOptions.minAmountCents}
+            maxAmountCents={gatewayOptions.maxAmountCents}
           />
         ) : (
           <Card className="flex flex-col items-center justify-center p-10 text-center">

@@ -34,7 +34,7 @@ export function GatewaySettingsForm({ configs }: { configs: GatewayConfig[] }) {
     stripeEnabled: stripe?.enabled ?? true,
     monerisEnabled: moneris?.enabled ?? false,
     environment: (stripe?.environment ?? "test") as "test" | "live",
-    minAmount: String(stripe?.nonSensitiveSettings?.minAmount ?? 1000),
+    minAmount: String(stripe?.nonSensitiveSettings?.minAmount ?? 100),
     maxAmount: String(stripe?.nonSensitiveSettings?.maxAmount ?? 200000),
     defaultCurrency: (stripe?.nonSensitiveSettings?.defaultCurrency ?? "CAD") as "CAD",
     presetAmounts: initialPresetAmounts

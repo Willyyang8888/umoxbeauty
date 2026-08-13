@@ -16,6 +16,8 @@ type SupportCheckoutFormProps = {
   stripePublishableKey: string;
   enabledGateways: PaymentGatewayName[];
   initialGateway: PaymentGatewayName;
+  minAmountCents: number;
+  maxAmountCents: number;
 };
 
 type CheckoutResponse = {
@@ -25,11 +27,16 @@ type CheckoutResponse = {
   checkoutUrl?: string;
 };
 
+const formatCad = (cents: number) =>
+  new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
+
 export function SupportCheckoutForm({
   presetAmounts,
   stripeEnabled,
   stripePublishableKey,
-  initialGateway
+  initialGateway,
+  minAmountCents,
+  maxAmountCents
 }: SupportCheckoutFormProps) {
   const [amount, setAmount] = useState(presetAmounts[1] ?? 2500);
   const [customAmount, setCustomAmount] = useState("");
@@ -64,15 +71,23 @@ export function SupportCheckoutForm({
   const selectedAmount = customAmount ? Math.round(Number(customAmount) * 100) : amount;
 
   const selectedAmountValid =
-    Number.isFinite(selectedAmount) && selectedAmount >= 100 && selectedAmount <= 200000;
+    Number.isFinite(selectedAmount) &&
+    selectedAmount >= minAmountCents &&
+    selectedAmount <= maxAmountCents;
 
   const customAmountInvalid =
     customAmount.trim() !== "" &&
-    (!Number.isFinite(selectedAmount) || selectedAmount < 100 || selectedAmount > 200000);
+    (!Number.isFinite(selectedAmount) ||
+      selectedAmount < minAmountCents ||
+      selectedAmount > maxAmountCents);
 
   async function createIntentNow() {
     if (!selectedAmountValid) {
-      setError(customAmount ? "Minimum custom support amount is $1.00 CAD." : null);
+      setError(
+        customAmount
+          ? `Minimum custom support amount is ${formatCad(minAmountCents)} (maximum ${formatCad(maxAmountCents)}).`
+          : null
+      );
       return false;
     }
     setBusy(true);
@@ -155,10 +170,10 @@ export function SupportCheckoutForm({
             <Input
               id="customAmount"
               type="number"
-              min="1"
-              max="2000"
+              min={minAmountCents / 100}
+              max={maxAmountCents / 100}
               step="0.01"
-              placeholder="Enter a custom amount (minimum $1.00)"
+              placeholder={`Enter a custom amount (minimum ${formatCad(minAmountCents)})`}
               value={customAmount}
               aria-invalid={customAmountInvalid || undefined}
               className={
@@ -177,7 +192,8 @@ export function SupportCheckoutForm({
             />
             {customAmountInvalid ? (
               <p className="mt-2 text-sm font-medium text-red-600">
-                Minimum custom support amount is $1.00 CAD (maximum $2,000.00).
+                Minimum custom support amount is {formatCad(minAmountCents)} (maximum{" "}
+                {formatCad(maxAmountCents)}).
               </p>
             ) : null}
           </div>
@@ -235,7 +251,7 @@ export function SupportCheckoutForm({
               disabled={busy || !selectedAmountValid}
               title={
                 !selectedAmountValid && customAmount
-                  ? "Minimum custom support amount is $1.00 CAD."
+                  ? `Minimum custom support amount is ${formatCad(minAmountCents)} (maximum ${formatCad(maxAmountCents)}).`
                   : undefined
               }
               className="w-full"
@@ -244,7 +260,7 @@ export function SupportCheckoutForm({
             </Button>
             {!selectedAmountValid && customAmount ? (
               <p className="mt-2 text-center text-sm font-medium text-red-600">
-                Minimum custom support amount is $1.00 CAD.
+                Minimum custom support amount is {formatCad(minAmountCents)}.
               </p>
             ) : null}
           </div>
@@ -309,8 +325,10 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
           return;
         }
 
-        if (result.paymentIntent) {
-          const s = result.paymentIntent.status;
+        const finalResult = result as unknown as { paymentIntent?: { status: string } };
+
+        if (finalResult.paymentIntent) {
+          const s = finalResult.paymentIntent.status;
           if (s === "succeeded" || s === "processing" || s === "requires_action") {
             window.location.href = `/support/${reference}/processing`;
             return;
