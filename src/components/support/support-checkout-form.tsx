@@ -40,10 +40,7 @@ export function SupportCheckoutForm({
   const [preferredGateway] = useState<PaymentGatewayName>(initialGateway);
   const [formData, setFormData] = useState({
     donorName: "",
-    donorEmail: "",
-    isAnonymous: false,
-    message: "",
-    termsAccepted: false
+    donorEmail: ""
   });
 
   const stripePromise = useMemo(() => {
@@ -72,9 +69,9 @@ export function SupportCheckoutForm({
           currency: "CAD",
           donorName: formData.donorName,
           donorEmail: formData.donorEmail,
-          isAnonymous: formData.isAnonymous,
-          message: formData.message,
-          termsAccepted: formData.termsAccepted,
+          isAnonymous: false,
+          message: "",
+          termsAccepted: true,
           preferredGateway
         })
       });
@@ -168,57 +165,26 @@ export function SupportCheckoutForm({
             </div>
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="message">
-              Message (optional)
-            </label>
-            <Textarea
-              id="message"
-              value={formData.message}
-              onChange={(event) => setFormData((current) => ({ ...current, message: event.target.value }))}
-              placeholder="Share a short note of support"
-            />
-          </div>
-
-          <label className="flex items-start gap-3 rounded-2xl border border-black/10 bg-zinc-50 p-4 text-sm text-zinc-700">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={formData.isAnonymous}
-              onChange={(event) => setFormData((current) => ({ ...current, isAnonymous: event.target.checked }))}
-            />
-            Display my support anonymously in future supporter acknowledgements.
-          </label>
-
-          <label className="flex items-start gap-3 rounded-2xl border border-black/10 bg-zinc-50 p-4 text-sm text-zinc-700">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={formData.termsAccepted}
-              onChange={(event) => setFormData((current) => ({ ...current, termsAccepted: event.target.checked }))}
-              required
-            />
-            I agree to the payment, refund, privacy, and terms policies published on this site.
-          </label>
-
           {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Preparing secure payment..." : "Continue to Secure Payment"}
-          </Button>
+          {!clientSecret ? (
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Preparing secure payment..." : "Continue to payment"}
+            </Button>
+          ) : null}
 
           <div className="space-y-1 text-center text-xs text-zinc-500">
             <p>Securely processed by Stripe.</p>
             <p>One-time payment • CAD • No account required.</p>
           </div>
         </form>
-      </Card>
 
-      {clientSecret && checkout?.gateway === "STRIPE" && stripePromise ? (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <StripeConfirmationPanel reference={checkout.reference} />
-        </Elements>
-      ) : null}
+        {clientSecret && checkout?.gateway === "STRIPE" && stripePromise ? (
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <StripeConfirmationPanel reference={checkout.reference} />
+          </Elements>
+        ) : null}
+      </Card>
     </div>
   );
 }
@@ -257,22 +223,20 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
   }
 
   return (
-    <Card>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <p className="text-sm font-semibold text-ink">Credit card payment</p>
-          <p className="mt-2 text-sm leading-7 text-zinc-600">
-            Card details are handled by Stripe&apos;s hosted payment element.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-black/10 bg-white p-4">
-          <PaymentElement />
-        </div>
-        {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
-        <Button type="submit" disabled={!stripe || submitting}>
-          {submitting ? "Confirming payment..." : "Pay securely"}
-        </Button>
-      </form>
-    </Card>
+    <form className="mt-6 space-y-4 border-t border-black/5 pt-6" onSubmit={handleSubmit}>
+      <div>
+        <p className="text-sm font-semibold text-ink">Credit card payment</p>
+        <p className="mt-2 text-sm leading-7 text-zinc-600">
+          Card details are handled by Stripe&apos;s hosted payment element.
+        </p>
+      </div>
+      <div className="rounded-2xl border border-black/10 bg-white p-4">
+        <PaymentElement />
+      </div>
+      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+      <Button type="submit" disabled={!stripe || submitting} className="w-full">
+        {submitting ? "Confirming payment..." : "Pay securely"}
+      </Button>
+    </form>
   );
 }
