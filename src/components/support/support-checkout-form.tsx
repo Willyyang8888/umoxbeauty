@@ -332,7 +332,14 @@ function StripeConfirmationPanel({
               billing_details: {
                 name: donorName ?? "Anonymous Supporter",
                 email: donorEmail ?? undefined,
-                phone: ""
+                phone: "",
+                address: {
+                  country: "CA",
+                  postal_code: "",
+                  line1: "",
+                  city: "",
+                  state: ""
+                }
               }
             }
           }
