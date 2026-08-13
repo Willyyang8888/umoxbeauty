@@ -26,83 +26,8 @@ type CheckoutInput = {
   preferredGateway?: PaymentGatewayName;
 };
 
-async function ensureGatewaySettingsDefaults(): Promise<void> {
-  try {
-    const stripeConfig = await prisma.gatewayConfiguration.findUnique({
-      where: { gateway: PaymentGatewayName.STRIPE }
-    });
-
-    if (!stripeConfig) {
-      return;
-    }
-
-    const settings = stripeConfig.nonSensitiveSettings as
-      | { minAmount?: number; maxAmount?: number }
-      | null
-      | undefined;
-
-    const needsRewrite =
-      !settings ||
-      typeof settings.minAmount !== "number" ||
-      settings.minAmount > maxAmountCents ||
-      settings.minAmount < minAmountCents ||
-      typeof settings.maxAmount !== "number" ||
-      settings.maxAmount > maxAmountCents ||
-      settings.maxAmount < minAmountCents ||
-      settings.minAmount === 1000;
-
-    if (!needsRewrite) {
-      return;
-    }
-
-    const normalized = {
-      ...(settings ?? {}),
-      minAmount:
-        typeof settings?.minAmount === "number" &&
-        settings.minAmount >= minAmountCents &&
-        settings.minAmount <= maxAmountCents
-          ? settings.minAmount
-          : minAmountCents,
-      maxAmount:
-        typeof settings?.maxAmount === "number" &&
-        settings.maxAmount >= minAmountCents &&
-        settings.maxAmount <= maxAmountCents
-          ? settings.maxAmount
-          : maxAmountCents
-    };
-
-    await prisma.gatewayConfiguration.update({
-      where: { id: stripeConfig.id },
-      data: { nonSensitiveSettings: normalized }
-    });
-  } catch {
-    // no-op: DB misshape never blocks public checkout
-  }
-}
-
 async function getGatewayAmountBounds(): Promise<{ min: number; max: number }> {
-  try {
-    await ensureGatewaySettingsDefaults();
-    const stripeConfig = await prisma.gatewayConfiguration.findUnique({
-      where: { gateway: PaymentGatewayName.STRIPE }
-    });
-    const settings = stripeConfig?.nonSensitiveSettings as
-      | { minAmount?: number; maxAmount?: number }
-      | null
-      | undefined;
-
-    const configuredMin =
-      typeof settings?.minAmount === "number"
-        ? Math.max(minAmountCents, Math.min(maxAmountCents, settings.minAmount))
-        : minAmountCents;
-    const configuredMax =
-      typeof settings?.maxAmount === "number"
-        ? Math.min(maxAmountCents, Math.max(minAmountCents, settings.maxAmount))
-        : maxAmountCents;
-    return { min: configuredMin, max: configuredMax };
-  } catch {
-    return { min: minAmountCents, max: maxAmountCents };
-  }
+  return { min: minAmountCents, max: maxAmountCents };
 }
 
 export async function createCheckoutSession(input: CheckoutInput) {

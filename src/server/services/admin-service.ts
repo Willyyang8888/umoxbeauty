@@ -249,8 +249,14 @@ export async function saveGatewaySettings(
   const input = gatewaySettingsSchema.parse(rawInput);
 
   const stripeSettings = {
-    minAmount: input.minAmount,
-    maxAmount: input.maxAmount,
+    minAmount: Math.max(
+      (await import("@/features/support/schema")).minAmountCents,
+      Math.min((await import("@/features/support/schema")).maxAmountCents, input.minAmount)
+    ),
+    maxAmount: Math.min(
+      (await import("@/features/support/schema")).maxAmountCents,
+      Math.max((await import("@/features/support/schema")).minAmountCents, input.maxAmount)
+    ),
     defaultCurrency: input.defaultCurrency,
     presetAmounts: input.presetAmounts
   };

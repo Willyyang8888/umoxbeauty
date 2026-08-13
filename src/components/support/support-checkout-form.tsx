@@ -331,7 +331,8 @@ function StripeConfirmationPanel({
             payment_method_data: {
               billing_details: {
                 name: donorName ?? "Anonymous Supporter",
-                email: donorEmail ?? undefined
+                email: donorEmail ?? undefined,
+                phone: ""
               }
             }
           }
