@@ -25,6 +25,8 @@ type CheckoutResponse = {
   gateway: "STRIPE" | "MONERIS";
   clientSecret?: string;
   checkoutUrl?: string;
+  donorName?: string;
+  donorEmail?: string;
 };
 
 const formatCad = (cents: number) =>
@@ -271,6 +273,8 @@ export function SupportCheckoutForm({
             <StripeConfirmationPanel
               reference={checkout.reference}
               disabled={busy}
+              donorName={checkout.donorName}
+              donorEmail={checkout.donorEmail}
             />
           </Elements>
         ) : null}
@@ -279,7 +283,17 @@ export function SupportCheckoutForm({
   );
 }
 
-function StripeConfirmationPanel({ reference, disabled }: { reference: string; disabled?: boolean }) {
+function StripeConfirmationPanel({
+  reference,
+  disabled,
+  donorName,
+  donorEmail
+}: {
+  reference: string;
+  disabled?: boolean;
+  donorName?: string;
+  donorEmail?: string;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -313,7 +327,13 @@ function StripeConfirmationPanel({ reference, disabled }: { reference: string; d
         const result = await stripe.confirmPayment({
           elements,
           confirmParams: {
-            return_url: `${window.location.origin}/support/${reference}/processing`
+            return_url: `${window.location.origin}/support/${reference}/processing`,
+            payment_method_data: {
+              billing_details: {
+                name: donorName ?? "Anonymous Supporter",
+                email: donorEmail ?? undefined
+              }
+            }
           }
         });
 

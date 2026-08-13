@@ -193,7 +193,9 @@ export async function createCheckoutSession(input: CheckoutInput) {
     gateway: result.gateway,
     clientSecret: result.clientSecret,
     checkoutUrl: result.checkoutUrl,
-    status: result.status
+    status: result.status,
+    donorName: normalizedName,
+    donorEmail: normalizedEmail
   };
 }
 
