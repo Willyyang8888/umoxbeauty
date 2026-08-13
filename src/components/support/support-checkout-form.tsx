@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { PaymentGatewayName } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input, Textarea } from "@/components/ui/field";
+import { Input } from "@/components/ui/field";
 import { formatCurrency } from "@/lib/utils";
 
 type SupportCheckoutFormProps = {
@@ -35,13 +35,15 @@ export function SupportCheckoutForm({
   const [customAmount, setCustomAmount] = useState("");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [creatingIntent, setCreatingIntent] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [preferredGateway] = useState<PaymentGatewayName>(initialGateway);
   const [formData, setFormData] = useState({
     donorName: "",
     donorEmail: ""
   });
+  const formDataRef = useRef(formData);
+  formDataRef.current = formData;
 
   const stripePromise = useMemo(() => {
     if (!stripeEnabled || !stripePublishableKey) {
@@ -61,55 +63,74 @@ export function SupportCheckoutForm({
     };
   }, [clientSecret]);
 
-  async function handleCreateIntent(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
+  const createIntentFor = useCallback(
+    async (selectedAmount: number, { dryRun }: { dryRun?: boolean } = {}) => {
+      const currentForm = formDataRef.current;
+      setCreatingIntent(true);
+      setCreateError(null);
 
+      try {
+        const response = await fetch("/api/support/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            amount: selectedAmount,
+            currency: "CAD",
+            donorName: currentForm.donorName,
+            donorEmail: currentForm.donorEmail,
+            isAnonymous: false,
+            message: "",
+            termsAccepted: true,
+            preferredGateway
+          })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Unable to initialize payment.");
+        }
+
+        if (dryRun) return;
+
+        setClientSecret(payload.clientSecret ?? null);
+        setCheckout(payload);
+
+        if (payload.gateway === "MONERIS" && payload.checkoutUrl) {
+          window.location.href = payload.checkoutUrl;
+          return;
+        }
+      } catch (requestError) {
+        if (!dryRun) {
+          setCreateError(requestError instanceof Error ? requestError.message : "Unable to initialize payment.");
+        }
+      } finally {
+        if (!dryRun) {
+          setCreatingIntent(false);
+        }
+      }
+    },
+    [preferredGateway]
+  );
+
+  useEffect(() => {
     const selectedAmount = customAmount ? Math.round(Number(customAmount) * 100) : amount;
-
-    try {
-      const response = await fetch("/api/support/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          amount: selectedAmount,
-          currency: "CAD",
-          donorName: formData.donorName,
-          donorEmail: formData.donorEmail,
-          isAnonymous: false,
-          message: "",
-          termsAccepted: true,
-          preferredGateway
-        })
-      });
-
-      const payload = await response.json();
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to initialize payment.");
-      }
-
-      setClientSecret(payload.clientSecret ?? null);
-      setCheckout(payload);
-
-      if (payload.gateway === "MONERIS" && payload.checkoutUrl) {
-        window.location.href = payload.checkoutUrl;
-        return;
-      }
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to initialize payment.");
-    } finally {
-      setLoading(false);
+    if (!Number.isFinite(selectedAmount) || selectedAmount < 1000) {
+      setClientSecret(null);
+      setCheckout(null);
+      setCreateError(null);
+      return;
     }
-  }
+
+    createIntentFor(selectedAmount);
+  }, [amount, customAmount, preferredGateway, createIntentFor]);
 
   return (
     <div className="space-y-6">
       <Card>
-        <form className="space-y-5" onSubmit={handleCreateIntent}>
+        <div className="space-y-5">
           <div>
             <p className="text-sm font-semibold text-ink">Choose an amount</p>
             <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -148,50 +169,45 @@ export function SupportCheckoutForm({
 
           <div>
             <p className="text-sm font-semibold text-ink">Your details</p>
+            <p className="mt-2 text-xs text-zinc-500">Optional — leave blank for an anonymous support payment.</p>
             <div className="mt-3 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorName">
-                  Full name
+                  Full name (optional)
                 </label>
                 <Input
                   id="donorName"
+                  autoComplete="name"
                   value={formData.donorName}
                   onChange={(event) => setFormData((current) => ({ ...current, donorName: event.target.value }))}
-                  required
                 />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-zinc-700" htmlFor="donorEmail">
-                  Email
+                  Email (optional)
                 </label>
                 <Input
                   id="donorEmail"
                   type="email"
+                  autoComplete="email"
                   value={formData.donorEmail}
                   onChange={(event) => setFormData((current) => ({ ...current, donorEmail: event.target.value }))}
-                  required
                 />
               </div>
             </div>
           </div>
 
-          {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
-
-          {!clientSecret ? (
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Preparing secure payment..." : "Continue to payment"}
-            </Button>
-          ) : null}
+          {createError ? <p className="text-sm font-medium text-red-600">{createError}</p> : null}
 
           <div className="space-y-1 text-center text-xs text-zinc-500">
             <p>Securely processed by Stripe.</p>
             <p>One-time payment • CAD • No account required.</p>
           </div>
-        </form>
+        </div>
 
         {clientSecret && checkout?.gateway === "STRIPE" && stripePromise && elementsOptions ? (
           <Elements stripe={stripePromise} options={elementsOptions}>
-            <StripeConfirmationPanel reference={checkout.reference} />
+            <StripeConfirmationPanel reference={checkout.reference} disabled={creatingIntent} />
           </Elements>
         ) : null}
       </Card>
@@ -199,7 +215,7 @@ export function SupportCheckoutForm({
   );
 }
 
-function StripeConfirmationPanel({ reference }: { reference: string }) {
+function StripeConfirmationPanel({ reference, disabled }: { reference: string; disabled?: boolean }) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -249,12 +265,6 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
 
   return (
     <form className="mt-6 space-y-4 border-t border-black/5 pt-6" onSubmit={handleSubmit}>
-      <div>
-        <p className="text-sm font-semibold text-ink">Credit card payment</p>
-        <p className="mt-2 text-sm leading-7 text-zinc-600">
-          Card details are handled by Stripe&apos;s hosted payment element.
-        </p>
-      </div>
       <div className="rounded-2xl border border-black/10 bg-white p-4">
         <PaymentElement
           options={{
@@ -274,8 +284,8 @@ function StripeConfirmationPanel({ reference }: { reference: string }) {
         />
       </div>
       {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
-      <Button type="submit" disabled={!stripe || submitting} className="w-full">
-        {submitting ? "Confirming payment..." : "Pay securely"}
+      <Button type="submit" disabled={!stripe || submitting || disabled} className="w-full">
+        {submitting ? "Confirming donation..." : "Confirm donation"}
       </Button>
     </form>
   );

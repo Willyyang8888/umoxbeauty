@@ -7,8 +7,8 @@ export const presetAmounts = [1_000, 2_500, 5_000, 10_000];
 export const checkoutSchema = z.object({
   amount: z.number().int().min(minAmountCents).max(maxAmountCents),
   currency: z.literal("CAD"),
-  donorName: z.string().trim().min(2).max(120),
-  donorEmail: z.string().trim().email().max(160),
+  donorName: z.string().trim().min(0).max(120).default("Anonymous Supporter"),
+  donorEmail: z.string().trim().min(0).max(160).default(""),
   isAnonymous: z.boolean().default(false),
   message: z.string().trim().max(500).optional().or(z.literal("")),
   termsAccepted: z.literal(true),

@@ -31,15 +31,18 @@ export async function createCheckoutSession(input: CheckoutInput) {
   const selectedGateway = await resolveCheckoutGateway(input.preferredGateway);
   const gateway = await createPaymentGateway(selectedGateway);
 
+  const normalizedName = input.donorName.trim() || "Anonymous Supporter";
+  const normalizedEmail = input.donorEmail.trim();
+
   const session = await prisma.supportSession.create({
     data: {
       publicReference: sessionReference,
       paymentLabel: "SUPPORT",
       requestedAmount: input.amount,
       currency: input.currency,
-      donorName: input.donorName,
-      donorEmail: input.donorEmail,
-      isAnonymous: input.isAnonymous,
+      donorName: normalizedName,
+      donorEmail: normalizedEmail,
+      isAnonymous: input.isAnonymous || !normalizedEmail,
       message: input.message,
       status: SupportTransactionStatus.CREATED
     }
@@ -53,9 +56,9 @@ export async function createCheckoutSession(input: CheckoutInput) {
       amount: input.amount,
       currency: input.currency,
       status: SupportTransactionStatus.CREATED,
-      donorName: input.donorName,
-      donorEmail: input.donorEmail,
-      isAnonymous: input.isAnonymous,
+      donorName: normalizedName,
+      donorEmail: normalizedEmail,
+      isAnonymous: input.isAnonymous || !normalizedEmail,
       message: input.message
     }
   });
@@ -65,8 +68,8 @@ export async function createCheckoutSession(input: CheckoutInput) {
     publicReference: transaction.publicReference,
     amount: input.amount,
     currency: input.currency,
-    donorEmail: input.donorEmail,
-    donorName: input.donorName,
+    donorEmail: normalizedEmail,
+    donorName: normalizedName,
     returnUrl: ""
   });
 

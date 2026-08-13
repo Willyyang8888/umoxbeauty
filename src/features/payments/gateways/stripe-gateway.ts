@@ -25,18 +25,22 @@ function getStripeClient() {
 export class StripeGateway implements PaymentGateway {
   async createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult> {
     const stripe = getStripeClient();
-    const intent = await stripe.paymentIntents.create({
+    const params: Stripe.PaymentIntentCreateParams = {
       amount: input.amount,
       currency: input.currency.toLowerCase(),
-      receipt_email: input.donorEmail,
       payment_method_types: ["card"],
       metadata: {
         transactionId: input.transactionId,
-        donorEmail: input.donorEmail,
         donorName: input.donorName,
         ...input.metadata
       }
-    });
+    };
+
+    if (input.donorEmail) {
+      params.receipt_email = input.donorEmail;
+    }
+
+    const intent = await stripe.paymentIntents.create(params);
 
     return {
       gateway: "STRIPE",
